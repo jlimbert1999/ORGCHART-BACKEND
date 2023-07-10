@@ -27,9 +27,8 @@ const UserScheme = Schema({
         type: String
     },
     cargo: {
-        type: String,
-        required: true,
-        uppercase: true
+        type: Schema.Types.ObjectId,
+        ref: 'cargos'
     },
     activo: {
         type: Boolean,

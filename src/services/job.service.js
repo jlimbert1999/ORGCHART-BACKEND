@@ -1,8 +1,12 @@
-const JobModel = require('../models/job.model')
-const OfficerModel = require('../models/officer.model')
+const JobModel = require('../schemas/job.model')
+const OfficerModel = require('../schemas/officer.model')
 
 exports.get = async () => {
-    return await JobModel.find({})
+    return await JobModel.find({}).sort({ _id: -1 })
+}
+exports.search = async (text) => {
+    const regex = new RegExp(text, 'i')
+    return JobModel.find({ nombre: regex })
 }
 
 exports.searchJobForUser = async (text) => {
@@ -77,10 +81,11 @@ exports.getOrganization = async () => {
         }
     ])
     for (const element of data) {
-        const superiorOfficer = await JobModel.findOne({ cargo: element._id })
+        const superiorOfficer = await OfficerModel.findOne({ cargo: element._id })
         element.officer = superiorOfficer
         for (const [index, dependents] of element.organigram.entries()) {
             const dependentOfficer = await OfficerModel.findOne({ cargo: dependents._id })
+            
             element.organigram[index].officer = dependentOfficer
         }
     }
